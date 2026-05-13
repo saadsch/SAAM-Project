@@ -52,8 +52,9 @@ def run_financial_analysis():
         ret    = ret.replace([np.inf, -np.inf], np.nan)
 
         # --- Rule: investment universe at end-2013 for implementation in 2014 ---
+        cutoff_date = '2013-12-31'
         # Use full history up to end-2013 for all filter checks.
-        ret_window = ret.loc[:'2013-12-31']
+        ret_window = ret.loc[:cutoff_date]
 
         # History filter: >= 36 non-NaN monthly returns
         obs_count = ret_window.count()
@@ -83,16 +84,49 @@ def run_financial_analysis():
                     coverage = co2_df['2013'].reindex(ret_window.columns).notna()
                     has_co2  = has_co2 | coverage
 
-        # Combine all three filters
-        valid_mask   = (obs_count >= 36) & (~stale_flags) & has_co2
-        valid_assets = ret_window.columns[valid_mask].tolist()
+        # Combine all three filters and persist a reproducible snapshot table.
+        eligible_history = obs_count >= 36
+        eligible_not_stale = ~stale_flags
+        eligible_carbon = has_co2
+        included_final = eligible_history & eligible_not_stale & eligible_carbon
+
+        snapshot = pd.DataFrame({
+            'ISIN': ret_window.columns,
+            'eligible_history_36m': eligible_history.reindex(ret_window.columns).astype(bool).values,
+            'eligible_not_stale_120m': eligible_not_stale.reindex(ret_window.columns).astype(bool).values,
+            'eligible_carbon_scope1_or_scope2': eligible_carbon.reindex(ret_window.columns).astype(bool).values,
+            'included_final': included_final.reindex(ret_window.columns).astype(bool).values,
+            'cutoff_date': cutoff_date,
+        })
+        snapshot_path = 'data/processed/part1_universe_snapshot.csv'
+        snapshot.to_csv(snapshot_path, index=False)
+
+        summary = pd.DataFrame([
+            {'rule': 'history_lt_36m', 'removed_count': int((~eligible_history).sum())},
+            {'rule': 'stale_prices_over_50pct_in_any_120m_window', 'removed_count': int((~eligible_not_stale).sum())},
+            {'rule': 'missing_scope1_and_scope2_at_2013', 'removed_count': int((~eligible_carbon).sum())},
+            {'rule': 'final_included', 'removed_count': int(included_final.sum())},
+            {'rule': 'final_excluded', 'removed_count': int((~included_final).sum())},
+        ])
+        summary_path = 'outputs/part1_universe_filter_summary.csv'
+        summary.to_csv(summary_path, index=False)
+
+        print(f"PART1_UNIVERSE_FIXED | cutoff={cutoff_date} | snapshot={snapshot_path} | summary={summary_path}")
+
+        # Downstream optimization input: always reload the ISIN list from snapshot.
+        included_isins = (
+            pd.read_csv(snapshot_path)
+            .loc[lambda df: df['included_final'], 'ISIN']
+            .astype(str)
+            .tolist()
+        )
 
         # Save: return series for valid firms, full history up to end-2013
-        ret_window[valid_assets].to_csv('data/processed/final_returns_matrix.csv')
-        print(f"Analysis complete: {len(valid_assets)} assets in universe for 2014.")
+        ret_window[included_isins].to_csv('data/processed/final_returns_matrix.csv')
+        print(f"Analysis complete: {len(included_isins)} assets in universe for 2014.")
 
         # Save exclusion log for traceability
-        excluded = ret_window.columns[~valid_mask]
+        excluded = snapshot.loc[~snapshot['included_final'], 'ISIN']
         log_rows = []
         for isin in excluded:
             reasons = []
