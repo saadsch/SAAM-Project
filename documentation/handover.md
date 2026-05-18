@@ -37,7 +37,9 @@ Carbon definitions:
 src/01_cleaning.py            # Datastream → Pacific universe (Part I prerequisite)
 src/02_analysis.py            # Price cleaning, universe filtering (Part I prerequisite)
 src/03_outputs.py             # Part I outputs (risk vs CI scatter)
-src/05_part3_part4.py         # Parts III & IV optimisation engine  ← THE ENGINE
+src/saam_core.py              # Shared helpers (loading, cleaning, SLSQP, stats)
+src/05_part3.py               # Part III optimisation engine (Sections 3.1-3.4)
+src/06_part4.py               # Part IV optimisation engine (Section 4, Net-Zero)
 src/Part3_Part4_notebook.ipynb  # Reproducible notebook deliverable  ← RUN THIS
 documentation/SAAM_Project_2026 (1).pdf
 documentation/handover.md       # this file
@@ -52,14 +54,17 @@ To regenerate every output from scratch:
 cd /Users/yazidabaroudi/SAAM-Project-1
 python3 src/01_cleaning.py        # only if data/processed/ is empty
 python3 src/02_analysis.py        # only if data/processed/ is empty
-python3 src/05_part3_part4.py
+python3 src/05_part3.py
+python3 src/06_part4.py
 ```
 
 Or open `src/Part3_Part4_notebook.ipynb` in VS Code and run all cells.
 
 ---
 
-## 3. Technique used in `src/05_part3_part4.py`
+## 3. Technique used in `src/05_part3.py` and `src/06_part4.py`
+
+Both scripts share `src/saam_core.py`. Part III handles `mv`, `mv_50`, `vw_50`; Part IV handles `vw_nz`.
 
 * **Solver:** `scipy.optimize.minimize(method="SLSQP")` with analytic
   gradients. SLSQP handles a quadratic objective + linear equality and
@@ -91,7 +96,7 @@ Or open `src/Part3_Part4_notebook.ipynb` in VS Code and run all cells.
 
 ## 4. Variables to know
 
-### Constants at the top of `05_part3_part4.py`
+### Constants at the top of `src/saam_core.py`
 
 | Constant | Value | Meaning |
 |---|---|---|
@@ -140,16 +145,18 @@ Or open `src/Part3_Part4_notebook.ipynb` in VS Code and run all cells.
 
 ### 5.1 Headline performance summary
 
-| Portfolio | Annualised return | Annualised volatility | Sharpe | Min monthly | Max monthly | Cumulative |
-|---|---:|---:|---:|---:|---:|---:|
-| `vw`       |  6.72 % | 12.88 % | 0.52 | -10.76 % | 13.07 % | 118.34 % |
-| `vw_drift` |  6.62 % | 13.19 % | 0.50 | -11.95 % | 12.98 % | 115.72 % |
-| `mv`       |  8.30 % | 11.58 % | 0.72 |  -8.08 % | 11.04 % | 160.32 % |
-| `mv_50`    |  9.06 % | 11.70 % | 0.77 |  -8.14 % | 10.63 % | 183.14 % |
-| `vw_50`    |  7.79 % | 13.59 % | 0.57 | -14.40 % | 11.59 % | 146.02 % |
-| `vw_nz`    |  7.70 % | 13.63 % | 0.57 | -14.29 % | 11.95 % | 143.65 % |
+| Portfolio | Ann. return | Ann. vol | Ann. RF | Sharpe | TE vs VW | Min monthly | Max monthly | Cumulative |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `vw`       |  6.72 % | 12.88 % | 1.75 % | 0.39 |   —    | -10.76 % | 13.07 % | 118.34 % |
+| `vw_drift` |  6.62 % | 13.19 % | 1.75 % | 0.37 | 1.45 % | -11.95 % | 12.98 % | 115.72 % |
+| `mv`       |  8.30 % | 11.58 % | 1.75 % | 0.57 | 9.07 % |  -8.08 % | 11.04 % | 160.32 % |
+| `mv_50`    |  9.06 % | 11.70 % | 1.75 % | 0.62 | 9.01 % |  -8.14 % | 10.63 % | 183.14 % |
+| `vw_50`    |  7.79 % | 13.59 % | 1.75 % | 0.44 | 3.24 % | -14.40 % | 11.59 % | 146.02 % |
+| `vw_nz`    |  7.70 % | 13.63 % | 1.75 % | 0.44 | 3.16 % | -14.29 % | 11.95 % | 143.65 % |
 
-(Source: `outputs/part3_4_performance_summary.csv`. Sharpe uses 0% risk-free.)
+(Source: `outputs/part3_performance_summary.csv` and `outputs/part4_performance_summary.csv`. Sharpe = (ann return − ann RF) / ann vol with the
+annualised Pacific RF computed as `rf.mean() * 12`, matching `src/MVP-construction.ipynb`. Tracking
+error is the annualised std of `R_p − R_vw` over the full 2014-01 → 2025-12 window.)
 
 ### 5.2 Carbon-constraint check
 
@@ -182,21 +189,37 @@ expands.
 
 ### 5.4 Output files for the report
 
-In `outputs/`:
-* `part3_4_performance_summary.csv`
-* `part3_4_annual_carbon_metrics.csv`
-* `part3_4_monthly_portfolio_returns.csv`
-* `part3_4_portfolio_weights.csv`
-* `part3_4_top10_waci_drivers_by_year.csv`
-* `part3_4_exclusions_overweights.csv`
+In `outputs/` (Part III — from `src/05_part3.py`):
+* `part3_performance_summary.csv` — RF-adjusted Sharpe + TE (`vw`, `vw_drift`, `mv`, `mv_50`, `vw_50`)
+* `part3_annual_carbon_metrics.csv`
+* `part3_monthly_returns.csv`
+* `part3_portfolio_weights.csv`
+* `part3_top10_waci_drivers_by_year.csv`
+* `part3_top10_cf_drivers_by_year.csv`
+* `part3_tracking_error.csv` — ex-ante and ex-post annual TE per portfolio
+* `part3_optimizer_status.csv` — SLSQP success/message per year × portfolio
+* `part3_carbon_constraint_slack.csv` — limit, realised CF, slack per year × portfolio
+* `part3_exclusions_overweights.csv`
+
+In `outputs/` (Part IV — from `src/06_part4.py`):
+* `part4_performance_summary.csv` — RF-adjusted Sharpe + TE (`vw`, `vw_drift`, `vw_nz`)
+* `part4_annual_carbon_metrics.csv`
+* `part4_monthly_returns.csv`
+* `part4_portfolio_weights.csv`
+* `part4_netzero_path.csv` — anchor CF, cap target, realised CF(vw_nz), CF(vw) per year
+* `part4_tracking_error.csv`
+* `part4_optimizer_status.csv`
+* `part4_carbon_constraint_slack.csv`
+* `part4_exclusions_overweights.csv`
 
 In `outputs/figures/`:
-* `part3_mv_vs_mv50_cumulative.png` — VW vs MV vs MV(0.5)
-* `part3_vw_vs_vw50_cumulative.png` — VW vs VW(0.5)
-* `part4_vw_vw50_netzero_cumulative.png` — VW vs VW(0.5) vs VW(NZ)
-* `part3_4_waci_by_portfolio.png` — annual WACI trajectory
-* `part3_4_carbon_footprint_by_portfolio.png` — annual CF trajectory
-* `part4_netzero_path.png` — net-zero target vs realised CF
+* `part3_1_waci.png` — annual WACI trajectory
+* `part3_1_carbon_footprint.png` — annual CF trajectory
+* `part3_2_mv_vs_mv50_cumulative.png` — VW vs MV vs MV(0.5) (starts at $1)
+* `part3_3_vw_vs_vw50_cumulative.png` — VW vs VW(0.5) (starts at $1)
+* `part3_4_tracking_error.png` — annual ex-ante TE per Part III constrained portfolio
+* `part4_1_netzero_cumulative.png` — VW vs VW(NZ) (starts at $1)
+* `part4_2_netzero_path.png` — net-zero target cap vs realised CF
 
 ---
 
@@ -222,13 +245,15 @@ In `outputs/figures/`:
 
 1. **Group strategy.** The script assumes **Scope 1**. If your
    group's assigned strategy is Scope 2 or Scope 1+2, change
-   `CARBON_SCOPE` at the top of `src/05_part3_part4.py` and rerun.
+   `CARBON_SCOPE` at the top of `src/saam_core.py` and rerun.
    Every output regenerates automatically.
 2. **Region.** Only Pacific is loaded. If your region is something
    else, that has to be changed earlier (in `src/01_cleaning.py`).
-3. **Risk-free rate.** Sharpe ratios use 0 %. If the rubric asks for
-   an excess-return Sharpe, subtract `Risk_Free_Rate_2025.xlsx`
-   from monthly returns before computing.
+3. **Risk-free rate.** Sharpe ratios now use the Pacific monthly RF
+   loaded from `data/processed/rf_rate.csv` (RF values in percent per
+   month; the engine divides by 100 and reports `ann_rf = rf.mean() * 12`).
+   To reproduce a 0 % Sharpe, pass `rf=None` to `summary_stats` in
+   `src/05_part3.py:run` and `src/06_part4.py:run`.
 4. **Report length.** PDF Section 5.2 caps the report at 30 pages.
    The deliverable bundle is: report (PDF), 1-page sales pitch (PDF),
    the notebook, the video.

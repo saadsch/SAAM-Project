@@ -6,14 +6,26 @@ represents. It is intended as a reading guide for the final report.
 
 ---
 
-## 1. `src/05_part3_part4.py` — optimisation engine
+## 1. Optimisation engine: `src/saam_core.py`, `src/05_part3.py`, `src/06_part4.py`
 
 ### Purpose
 
-Solves Parts III & IV (portfolios `mv`, `mv_50`, `vw_50`, `vw_nz`) and
-produces the value-weighted benchmark (`vw` and `vw_drift`) year by year
-from 2013 to 2024 (allocation years), with monthly performance simulated
-from 2014 to 2025.
+`src/saam_core.py` is a shared helper module: it loads the panels, applies
+the PDF Section 2.1 price-cleaning rules, builds the eligible universe at
+end of each allocation year, solves the long-only QP with SLSQP, simulates
+the drift-based implementation year, computes the monthly-rebalanced VW
+benchmark and the headline statistics.
+
+`src/05_part3.py` runs Part III — portfolios `mv` (PDF Section 2.2),
+`mv_50` (Section 3.2) and `vw_50` (Section 3.3) — with explicit
+`# === Section X.Y === #` markers in the code.
+
+`src/06_part4.py` runs Part IV — portfolio `vw_nz` (Section 4) — anchored
+on `CF(P_vw)_{2013}` with cap path `(1 - θ)^{Y - 2013 + 1} · CF(P_vw)_{2013}`
+(`θ = 10 %`).
+
+Both scripts produce `vw` (monthly rebalanced) and `vw_drift` (annual-cap,
+drift). Allocation years 2013–2024, performance 2014-01 → 2025-12.
 
 ### Technique
 
@@ -114,20 +126,41 @@ All four share `Σ w = 1` and `0 ≤ w_i ≤ 1`.
 
 ### Outputs (under `outputs/`)
 
+**From `src/05_part3.py` (Part III)**
+
 | File | Content |
 |---|---|
-| `part3_4_monthly_portfolio_returns.csv` | Monthly returns 2014-01 to 2025-12 for `vw`, `vw_drift`, `mv`, `mv_50`, `vw_50`, `vw_nz`. |
-| `part3_4_performance_summary.csv` | Annualised return, annualised volatility, Sharpe (with 0% RF), min/max monthly return, cumulative return. |
-| `part3_4_annual_carbon_metrics.csv` | Per year and per portfolio: WACI, carbon footprint, attributed emissions, the applicable cap, optimisation status. |
-| `part3_4_portfolio_weights.csv` | Non-zero weights per year, per portfolio, per ISIN (with name, country, CI). |
-| `part3_4_top10_waci_drivers_by_year.csv` | Top-10 firms ranked by `w_vw · CI` per year. |
-| `part3_4_exclusions_overweights.csv` | Per year and per constrained portfolio: top-10 exclusions vs VW (firms held by VW but excluded) and top-10 overweights vs VW. |
-| `figures/part3_mv_vs_mv50_cumulative.png` | Cumulative growth of $1: VW (monthly), MV, MV(0.5). |
-| `figures/part3_vw_vs_vw50_cumulative.png` | Cumulative growth of $1: VW vs VW(0.5). |
-| `figures/part4_vw_vw50_netzero_cumulative.png` | Cumulative growth of $1: VW, VW(0.5), VW(NZ). |
-| `figures/part3_4_waci_by_portfolio.png` | Annual WACI for every portfolio. |
-| `figures/part3_4_carbon_footprint_by_portfolio.png` | Annual carbon footprint for every portfolio. |
-| `figures/part4_netzero_path.png` | Net-zero target path overlaid on realised CF of `vw_drift` and `vw_nz`. |
+| `part3_monthly_returns.csv` | Monthly returns 2014-01 to 2025-12 for `vw`, `vw_drift`, `mv`, `mv_50`, `vw_50`. |
+| `part3_performance_summary.csv` | Annualised return, vol, RF, Sharpe (excess-return with Pacific RF from `rf_rate.csv`), TE vs `vw`, min/max monthly return, cumulative return. |
+| `part3_annual_carbon_metrics.csv` | Per year and per Part III portfolio: WACI, CF, attributed emissions, cap, optimisation status. |
+| `part3_portfolio_weights.csv` | Non-zero weights per year, per portfolio, per ISIN (with name, country, CI). |
+| `part3_top10_waci_drivers_by_year.csv` | Section 3.1 — top-10 firms ranked by `w_vw · CI` per year. |
+| `part3_top10_cf_drivers_by_year.csv` | Section 3.1 — top-10 firms ranked by `w_vw · E/Cap` per year. |
+| `part3_tracking_error.csv` | Annualised ex-ante and ex-post TE per year × portfolio. |
+| `part3_optimizer_status.csv` | SLSQP success/message per year × portfolio. |
+| `part3_carbon_constraint_slack.csv` | `carbon_limit − realised_CF` with a `binding_within_1e-6` flag. |
+| `part3_exclusions_overweights.csv` | Section 3.4 — top-10 exclusions and overweights vs VW per year × portfolio. |
+| `figures/part3_1_waci.png` | Section 3.1 — annual WACI by portfolio. |
+| `figures/part3_1_carbon_footprint.png` | Section 3.1 — annual CF by portfolio. |
+| `figures/part3_2_mv_vs_mv50_cumulative.png` | Section 3.2 — cumulative growth-of-$1: VW, MV, MV(0.5). |
+| `figures/part3_3_vw_vs_vw50_cumulative.png` | Section 3.3 — cumulative growth-of-$1: VW vs VW(0.5). |
+| `figures/part3_4_tracking_error.png` | Section 3.4 — annual ex-ante TE per constrained portfolio. |
+
+**From `src/06_part4.py` (Part IV)**
+
+| File | Content |
+|---|---|
+| `part4_monthly_returns.csv` | Monthly returns 2014-01 to 2025-12 for `vw`, `vw_drift`, `vw_nz`. |
+| `part4_performance_summary.csv` | RF-adjusted Sharpe + TE vs `vw` for the Part IV portfolios. |
+| `part4_annual_carbon_metrics.csv` | Per year for `vw_drift` and `vw_nz`. |
+| `part4_portfolio_weights.csv` | Non-zero weights of `vw_nz` (and `vw_drift`) per year × ISIN. |
+| `part4_netzero_path.csv` | Section 4.1 — anchor `CF(P_vw)_{2013}`, cap target, realised `CF(vw_nz)` and `CF(vw)` per year. |
+| `part4_tracking_error.csv` | Annualised ex-ante and ex-post TE. |
+| `part4_optimizer_status.csv` | SLSQP success/message. |
+| `part4_carbon_constraint_slack.csv` | Cap vs realised CF with binding flag. |
+| `part4_exclusions_overweights.csv` | Top-10 exclusions and overweights of `vw_nz` vs VW. |
+| `figures/part4_1_netzero_cumulative.png` | Section 4 — cumulative growth-of-$1: VW vs VW(NZ). |
+| `figures/part4_2_netzero_path.png` | Section 4 — target NZ cap path vs realised CF of `vw_nz` and `vw`. |
 
 ---
 
@@ -141,30 +174,33 @@ paths, no hidden setup.
 
 ### Technique
 
-The notebook is **a thin wrapper around the engine** (`05_part3_part4.py`),
-so the script remains the single source of truth. We import the script
-with `importlib.util.spec_from_file_location`, then call `part3_4.run()`,
-which writes all CSVs and PNGs into `outputs/`. The notebook reloads
-those artefacts and renders them.
+The notebook is **a thin wrapper around the two engines** (`05_part3.py`
+and `06_part4.py`), so the scripts remain the single source of truth. The
+notebook imports each script with `importlib.util.spec_from_file_location`,
+calls its `run()` function, then reloads the resulting CSVs/PNGs from
+`outputs/` to render them. The performance, carbon-metric and weight
+tables in the notebook concatenate the Part III outputs with the `vw_nz`
+rows from the Part IV outputs.
 
 ### Cells (10 sections)
 
 1. **Setup.** Locate the project root regardless of where the notebook is
    opened from (project root or `src/`); resolve `OUTPUTS` and `FIGURES`
-   paths; ensure the folders exist.
-2. **Run engine.** Imports and executes `part3_4.run()`.
-3. **Performance summary.** Reads `part3_4_performance_summary.csv` and
-   renders the headline table.
+   paths; make `src/` importable so `saam_core` is reachable.
+2. **Run engines.** Imports and executes `run()` for both `05_part3.py`
+   and `06_part4.py`.
+3. **Performance summary.** Reads `part3_performance_summary.csv` plus
+   the `vw_nz` row of `part4_performance_summary.csv`.
 4. **Annual carbon metrics + constraint check.** Reads
-   `part3_4_annual_carbon_metrics.csv`; computes the maximum excess of
+   `part3_annual_carbon_metrics.csv` plus the `vw_nz` rows of
+   `part4_annual_carbon_metrics.csv`; computes the maximum excess of
    `CF` above its `carbon_limit` per portfolio (should be ≈ 0).
-5. **Top-10 WACI drivers.** Reads
-   `part3_4_top10_waci_drivers_by_year.csv` (used to answer the PDF's
-   Section 3.1 question "which firms drive the WACI up").
-6. **Exclusions / overweights vs VW.** Reads
-   `part3_4_exclusions_overweights.csv` and shows, for the latest
-   allocation year, the firms excluded by `vw_nz` and the firms most
-   overweighted vs VW.
+5. **Top-10 WACI drivers.** Reads `part3_top10_waci_drivers_by_year.csv`
+   (universe-level WACI drivers do not depend on the portfolio).
+6. **Exclusions / overweights vs VW.** Concatenates
+   `part3_exclusions_overweights.csv` with the `vw_nz` rows of
+   `part4_exclusions_overweights.csv`; shows the firms excluded by
+   `vw_nz` and the firms most overweighted vs VW in the latest year.
 7. **Country tilts.** Aggregates the weights file by country to display
    the geographic distribution per portfolio per year — the empirical
    answer to the "sector/country tilts" discussion the PDF asks for.
@@ -191,7 +227,7 @@ in the methodology section, with no LLM-style padding.
    formulas.
 2. **File map.** Lists the files in `src/` and `documentation/` and
    says, in one sentence, what each one does.
-3. **Methodology of `05_part3_part4.py`.** SLSQP, benchmark warm-start,
+3. **Methodology of `05_part3.py` / `06_part4.py` (shared `saam_core.py`).** SLSQP, benchmark warm-start,
    complete-case `Σ`, the strict monthly-rebalanced VW benchmark, and
    the two new diagnostic outputs (exclusions/overweights and the
    net-zero path plot).

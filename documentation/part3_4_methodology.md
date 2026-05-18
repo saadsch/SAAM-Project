@@ -39,13 +39,15 @@ weights drift between rebalancing dates as in PDF Section 2.2.
   snapshot.
 * `src/03_outputs.py` — Part I figures (risk vs CI scatter, descriptive
   statistics).
-* `src/05_part3_part4.py` — Parts III & IV optimisation engine.
+* `src/saam_core.py` — shared helpers (data loading, cleaning, SLSQP, simulation, stats).
+* `src/05_part3.py` — Part III optimisation engine with explicit `# === Section X.Y === #` markers (3.1, 3.2, 3.3, 3.4).
+* `src/06_part4.py` — Part IV (Net-Zero) optimisation engine with `# === Section 4.X === #` markers (4.1, 4.2).
 * `src/Part3_Part4_notebook.ipynb` — single reproducible notebook for the
   final-deliverable requirement of the PDF.
 * `notebooks/`, `MVP-construction.ipynb`, `vwp.ipynb` — exploratory Part I
   notebooks.
 
-## 3. Methodology used in `src/05_part3_part4.py`
+## 3. Methodology used in `src/05_part3.py`, `src/06_part4.py` and `src/saam_core.py`
 
 * **Solver**: `scipy.optimize.minimize` with the SLSQP method. The
   optimisation problems are now passed in their natural form
@@ -69,11 +71,28 @@ weights drift between rebalancing dates as in PDF Section 2.2.
   within the year, used as benchmark vector for tracking error). The
   difference is small but non-zero.
 * **Composition diagnostics**: a new output
-  `outputs/part3_4_exclusions_overweights.csv` lists, for every year and
+  `outputs/part3_exclusions_overweights.csv` lists, for every year and
   every constrained portfolio, the ten largest exclusions vs the
   benchmark and the ten largest overweights vs the benchmark. This
   answers the PDF's request for "main changes regarding the composition
   of the portfolio" in Section 3.4.
+* **Risk-free rate**: Sharpe is computed with the Pacific monthly
+  risk-free series in `data/processed/rf_rate.csv` (RF in percent per
+  month; the engine divides by 100 and reports
+  `ann_rf = rf.mean() * 12`, matching `src/MVP-construction.ipynb`).
+* **Tracking error**: per allocation year and overall, the engine writes
+  the annualised ex-ante TE
+  `sqrt((w − w_vw)' Σ_Y (w − w_vw) · 12)`
+  and the annualised ex-post TE
+  `std(R_p − R_vw_drift) · √12` over the 12 implementation months.
+  The full-sample TE against the monthly-rebalanced VW also appears in
+  `outputs/part3_performance_summary.csv` (`tracking_error_vs_vw`).
+* **Other new diagnostics**:
+  `outputs/part3_top10_cf_drivers_by_year.csv` (top contributors to
+  CF(vw)_Y), `outputs/part3_optimizer_status.csv` (one row per year ×
+  portfolio with SLSQP success and message),
+  `outputs/part3_carbon_constraint_slack.csv` (limit − realised per
+  year × portfolio).
 * **Net-zero diagnostic plot**: `outputs/figures/part4_netzero_path.png`
   overlays the net-zero target trajectory and the realised footprint of
   `vw_nz` and `vw_drift`, which is a more readable presentation than the
@@ -81,14 +100,18 @@ weights drift between rebalancing dates as in PDF Section 2.2.
 
 ## 5. Headline results (Scope 1, Pacific, 2014–2025)
 
-| Portfolio  | Annualised return | Annualised volatility | Sharpe |
-|------------|------------------:|----------------------:|-------:|
-| `vw`       |  6.72%            | 12.88%                | 0.52   |
-| `vw_drift` |  6.62%            | 13.19%                | 0.50   |
-| `mv`       |  8.30%            | 11.58%                | 0.72   |
-| `mv_50`    |  9.06%            | 11.71%                | 0.77   |
-| `vw_50`    |  7.79%            | 13.59%                | 0.57   |
-| `vw_nz`    |  7.70%            | 13.63%                | 0.57   |
+| Portfolio  | Ann. return | Ann. vol | Ann. RF | Sharpe | TE vs VW |
+|------------|------------:|---------:|--------:|-------:|---------:|
+| `vw`       |  6.72%      | 12.88%   | 1.75%   | 0.39   |   —      |
+| `vw_drift` |  6.62%      | 13.19%   | 1.75%   | 0.37   | 1.45%    |
+| `mv`       |  8.30%      | 11.58%   | 1.75%   | 0.57   | 9.07%    |
+| `mv_50`    |  9.06%      | 11.70%   | 1.75%   | 0.62   | 9.01%    |
+| `vw_50`    |  7.79%      | 13.59%   | 1.75%   | 0.44   | 3.24%    |
+| `vw_nz`    |  7.70%      | 13.63%   | 1.75%   | 0.44   | 3.16%    |
+
+Sharpe uses the annualised Pacific RF (`rf.mean() * 12` over the
+performance window, RF values from `data/processed/rf_rate.csv` in
+percent per month). Tracking error is the annualised std of `R_p − R_vw`.
 
 All five constrained portfolios respect their carbon caps each year
 (verified in the notebook: the maximum excess of `CF` above `carbon_limit`
@@ -108,8 +131,8 @@ is below 1 t/M\$ for every portfolio).
   carbon. In the second half the cap binds harder and the realised
   return drifts slightly above `vw_50` thanks to favourable tilts toward
   lower-carbon segments.
-* `outputs/part3_4_exclusions_overweights.csv` and
-  `outputs/part3_4_top10_waci_drivers_by_year.csv` make it easy to
+* `outputs/part3_exclusions_overweights.csv` and
+  `outputs/part3_top10_waci_drivers_by_year.csv` make it easy to
   point to the specific firms that drive these tilts each year.
 
 ## 7. Limitations to discuss in the report
