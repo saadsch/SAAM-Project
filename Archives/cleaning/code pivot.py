@@ -33,4 +33,4 @@ df_pivot = df_pivot.sort_index()
 # Sauvegarder
 df_pivot.to_csv('data/processed/revenues_pivot.csv')
 
-print("Pivot créé : revenues_pivot.csv ✅")
+print("Pivot créé : Revenues.csv ✅")

@@ -4,7 +4,7 @@ df = pd.read_csv('data/processed/returns.csv', index_col=0, parse_dates=True)
 
 window_data = df.iloc[-144:]
 
-# Garder seulement les entreprises avec au moins 36 observations
+
 window_data = window_data.loc[:, window_data.count() >= 36]
 
 cov_matrix = window_data.cov() * (144 - 1) / 144
