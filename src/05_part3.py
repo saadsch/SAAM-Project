@@ -307,7 +307,7 @@ def run() -> None:
     stats[stats["portfolio"].isin(["mv", "mv_50"])].to_csv(
         TABLES / "part3_summary_mv_vs_mv_carbon50.csv", index=False
     )
-    weights[weights["portfolio"] == "mv_50"].to_csv(
+    weights[weights["portfolio"].isin(["mv", "mv_50"])].to_csv(
         TABLES / "part3_weights_mv_carbon50.csv", index=False
     )
     slack_table[slack_table["portfolio"] == "mv_50"].to_csv(
@@ -341,7 +341,7 @@ def run() -> None:
     stats[stats["portfolio"].isin(["vw", "vw_50"])].to_csv(
         TABLES / "part3_summary_vw_vs_vw_carbon50.csv", index=False
     )
-    weights[weights["portfolio"] == "vw_50"].to_csv(
+    weights[weights["portfolio"].isin(["vw", "vw_50"])].to_csv(
         TABLES / "part3_weights_vw_carbon50.csv", index=False
     )
     te_table[te_table["portfolio"] == "vw_50"].to_csv(

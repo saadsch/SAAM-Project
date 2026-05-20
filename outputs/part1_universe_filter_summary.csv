@@ -1,6 +1,0 @@
-rule,removed_count
-history_lt_36m,8
-stale_prices_over_50pct_in_120m_window,9
-missing_scope1_and_scope2_at_2013,314
-final_included,196
-final_excluded,317

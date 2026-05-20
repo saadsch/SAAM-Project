@@ -408,11 +408,17 @@ def summary_stats(
     rf: pd.Series | None = None,
     benchmark: str = "vw",
 ) -> pd.DataFrame:
-    """Per-portfolio headline statistics with an RF-aware Sharpe.
+    """Per-portfolio headline statistics.
 
-    Sharpe = (annualised return - annualised RF) / annualised volatility,
-    where annualised RF = monthly_rf.mean() * 12 (rf in fraction). The
-    `tracking_error_vs_vw` column is the annualised std of `R_p - R_bench`.
+    Columns produced (all in annualised decimal units unless otherwise noted):
+      annualized_return     = (1 + r).prod() ** (12 / len(r)) - 1
+      annualized_volatility = r.std(ddof=0) * sqrt(12)
+      annualized_rf         = rf.reindex(r.index).mean() * 12
+      return_to_volatility  = annualized_return / annualized_volatility
+      excess_sharpe_ratio   = (annualized_return - annualized_rf) / annualized_volatility
+      tracking_error_vs_vw  = std(r_p - r_bench, ddof=0) * sqrt(12)
+      cumulative_return     = (1 + r).prod() - 1
+      terminal_growth       = (1 + r).prod()
     """
     rows: list[dict] = []
     bench_series = monthly[benchmark] if benchmark in monthly.columns else None
@@ -425,22 +431,28 @@ def summary_stats(
             ann_rf = float(rf_aligned.mean() * 12.0) if len(rf_aligned) else 0.0
         else:
             ann_rf = 0.0
-        sharpe = (ann_ret - ann_rf) / ann_vol if ann_vol and ann_vol > 0 else np.nan
+        ret_to_vol = ann_ret / ann_vol if ann_vol and ann_vol > 0 else np.nan
+        excess_sharpe = (
+            (ann_ret - ann_rf) / ann_vol if ann_vol and ann_vol > 0 else np.nan
+        )
         if bench_series is not None and col != benchmark and len(r):
             diff = (monthly[col] - bench_series).dropna()
             te = float(diff.std(ddof=0) * np.sqrt(12.0)) if len(diff) else np.nan
         else:
             te = np.nan
+        gross = (1.0 + r).prod() if len(r) else np.nan
         rows.append({
             "portfolio": col,
             "annualized_return": ann_ret,
             "annualized_volatility": ann_vol,
-            "annualized_risk_free": ann_rf,
-            "sharpe_ratio": sharpe,
+            "annualized_rf": ann_rf,
+            "return_to_volatility": ret_to_vol,
+            "excess_sharpe_ratio": excess_sharpe,
             "tracking_error_vs_vw": te,
             "minimum_monthly_return": r.min() if len(r) else np.nan,
             "maximum_monthly_return": r.max() if len(r) else np.nan,
-            "cumulative_return": (1.0 + r).prod() - 1.0 if len(r) else np.nan,
+            "cumulative_return": gross - 1.0 if not pd.isna(gross) else np.nan,
+            "terminal_growth": gross,
         })
     return pd.DataFrame(rows)
 
