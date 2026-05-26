@@ -1,13 +1,13 @@
 year,implementation_year,portfolio,carbon_footprint,carbon_limit,slack,satisfied_within_1e-6,optimization_success,optimization_message
-2013,2014,vw_nz,183.06766028077286,204.3860394680236,21.31837918725074,True,True,Optimization terminated successfully
-2014,2015,vw_nz,157.76983020647668,183.94743552122122,26.17760531474454,True,True,Optimization terminated successfully
-2015,2016,vw_nz,140.23659849518685,165.55269196909913,25.316093473912275,True,True,Optimization terminated successfully
-2016,2017,vw_nz,148.99742277218917,148.9974227721892,2.842170943040401e-14,True,True,Optimization terminated successfully
-2017,2018,vw_nz,128.91003972160073,134.0976804949703,5.187640773369566,True,True,Optimization terminated successfully
-2018,2019,vw_nz,120.68791244547323,120.68791244547326,2.842170943040401e-14,True,True,Optimization terminated successfully
-2019,2020,vw_nz,104.49333646058719,108.61912120092595,4.125784740338759,True,True,Optimization terminated successfully
-2020,2021,vw_nz,97.75720908083335,97.75720908083335,0.0,True,True,Optimization terminated successfully
-2021,2022,vw_nz,80.65182955389669,87.98148817275002,7.32965861885333,True,True,Optimization terminated successfully
-2022,2023,vw_nz,74.54255791368274,79.18333935547501,4.640781441792271,True,True,Optimization terminated successfully
-2023,2024,vw_nz,70.76222840590302,71.2650054199275,0.5027770140244883,True,True,Optimization terminated successfully
-2024,2025,vw_nz,58.94007895921383,64.13850487793478,5.19842591872095,True,True,Optimization terminated successfully
+2013,2014,vw_nz,205.13842329406805,205.13842329406802,-2.842170943040401e-14,True,True,Optimization terminated successfully
+2014,2015,vw_nz,176.24828271280668,184.62458096466122,8.376298251854536,True,True,Optimization terminated successfully
+2015,2016,vw_nz,132.78310712749305,166.1621228681951,33.379015740702044,True,True,Optimization terminated successfully
+2016,2017,vw_nz,149.54591058137558,149.54591058137558,0.0,True,True,Optimization terminated successfully
+2017,2018,vw_nz,134.59131952323804,134.59131952323804,0.0,True,True,Optimization terminated successfully
+2018,2019,vw_nz,121.13218757091423,121.13218757091423,0.0,True,True,Optimization terminated successfully
+2019,2020,vw_nz,76.01807090448705,109.01896881382281,33.00089790933576,True,True,Optimization terminated successfully
+2020,2021,vw_nz,98.11707193244055,98.11707193244054,-1.4210854715202004e-14,True,True,Optimization terminated successfully
+2021,2022,vw_nz,88.30536473919648,88.30536473919648,0.0,True,True,Optimization terminated successfully
+2022,2023,vw_nz,79.42332585255147,79.47482826527684,0.051502412725369595,True,True,Optimization terminated successfully
+2023,2024,vw_nz,71.52734543874914,71.52734543874915,1.4210854715202004e-14,True,True,Optimization terminated successfully
+2024,2025,vw_nz,60.28060555617015,64.37461089487425,4.0940053387041,True,True,Optimization terminated successfully
