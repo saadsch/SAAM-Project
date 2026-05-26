@@ -1,6 +1,4 @@
 folder,file,relative_path,size_kb
-outputs,.DS_Store,outputs/.DS_Store,6.00390625
-outputs,cleanup_log.md,outputs/cleanup_log.md,3.521484375
 outputs/figures,part1_cumulative_mv.png,outputs/figures/part1_cumulative_mv.png,87.634765625
 outputs/figures,part2_cumulative_mv_vs_vw.png,outputs/figures/part2_cumulative_mv_vs_vw.png,118.7421875
 outputs/figures,part2_cumulative_vw.png,outputs/figures/part2_cumulative_vw.png,88.7333984375
@@ -17,21 +15,15 @@ outputs/figures,part4_cf_target_vs_realized.png,outputs/figures/part4_cf_target_
 outputs/figures,part4_cumulative_vw_vs_carbon50_vs_netzero.png,outputs/figures/part4_cumulative_vw_vs_carbon50_vs_netzero.png,147.0126953125
 outputs/figures,part4_tracking_error_vw_netzero.png,outputs/figures/part4_tracking_error_vw_netzero.png,83.759765625
 outputs/figures,part4_waci_vw_vs_carbon50_vs_netzero.png,outputs/figures/part4_waci_vw_vs_carbon50_vs_netzero.png,132.0908203125
-outputs,final_deliverables_index.md,outputs/final_deliverables_index.md,5.986328125
 outputs/tables,all_portfolio_annual_carbon_metrics.csv,outputs/tables/all_portfolio_annual_carbon_metrics.csv,6.611328125
-outputs/tables,all_portfolio_concentration_metrics.csv,outputs/tables/all_portfolio_concentration_metrics.csv,4.697265625
 outputs/tables,all_portfolio_constraint_slack.csv,outputs/tables/all_portfolio_constraint_slack.csv,6.220703125
 outputs/tables,all_portfolio_monthly_returns.csv,outputs/tables/all_portfolio_monthly_returns.csv,19.3037109375
 outputs/tables,all_portfolio_tracking_errors.csv,outputs/tables/all_portfolio_tracking_errors.csv,3.01171875
 outputs/tables,all_portfolio_weights.csv,outputs/tables/all_portfolio_weights.csv,1217.529296875
 outputs/tables,final_performance_summary.csv,outputs/tables/final_performance_summary.csv,1.1044921875
-outputs/tables,mv_weights.csv,outputs/tables/mv_weights.csv,19.658203125
-outputs/tables,output_file_inventory.csv,outputs/tables/output_file_inventory.csv,5.880859375
-outputs/tables,part1_mv_performance.csv,outputs/tables/part1_mv_performance.csv,0.611328125
 outputs/tables,part1_mv_returns.csv,outputs/tables/part1_mv_returns.csv,4.5283203125
 outputs/tables,part1_mv_weights.csv,outputs/tables/part1_mv_weights.csv,33.158203125
 outputs/tables,part1_performance_mv.csv,outputs/tables/part1_performance_mv.csv,0.5458984375
-outputs/tables,part2_mv_vs_vw_performance.csv,outputs/tables/part2_mv_vs_vw_performance.csv,0.611328125
 outputs/tables,part2_performance_vw.csv,outputs/tables/part2_performance_vw.csv,0.5458984375
 outputs/tables,part2_returns_vw.csv,outputs/tables/part2_returns_vw.csv,4.498046875
 outputs/tables,part3_carbon_metrics_mv_vw.csv,outputs/tables/part3_carbon_metrics_mv_vw.csv,2.4150390625
@@ -54,5 +46,3 @@ outputs/tables,part4_tracking_error_vw_netzero.csv,outputs/tables/part4_tracking
 outputs/tables,part4_weights_vw_netzero.csv,outputs/tables/part4_weights_vw_netzero.csv,343.759765625
 outputs/tables,portfolio_file_index.csv,outputs/tables/portfolio_file_index.csv,0.5224609375
 outputs/tables,risk_free_rate_dec2013_dec2024.csv,outputs/tables/risk_free_rate_dec2013_dec2024.csv,3.2216796875
-outputs/tables,vw_portfolio_returns.csv,outputs/tables/vw_portfolio_returns.csv,4.5048828125
-outputs,validation_checklist_part3_part4.md,outputs/validation_checklist_part3_part4.md,3.142578125
