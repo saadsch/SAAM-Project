@@ -5,7 +5,7 @@ year,implementation_year,portfolio,carbon_footprint,carbon_limit,slack,satisfied
 2016,2017,vw_50,132.55822314787446,132.5582231478744,-5.684341886080802e-14,True,True,Optimization terminated successfully
 2017,2018,vw_50,113.98928674639757,116.38584741842509,2.396560672027519,True,True,Optimization terminated successfully
 2018,2019,vw_50,90.67631760203962,90.6763176020396,-1.4210854715202004e-14,True,True,Optimization terminated successfully
-2019,2020,vw_50,58.982296930337675,97.38241624039813,38.400119310060454,True,True,Optimization terminated successfully
+2019,2020,vw_50,58.982296930334286,97.38241624039813,38.40011931006384,True,True,Optimization terminated successfully
 2020,2021,vw_50,77.3661431277564,77.3661431277564,0.0,True,True,Optimization terminated successfully
 2021,2022,vw_50,75.60240859790585,75.60240859790585,0.0,True,True,Optimization terminated successfully
 2022,2023,vw_50,76.3053550836105,76.3053550836105,0.0,True,True,Optimization terminated successfully

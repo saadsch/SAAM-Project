@@ -30,10 +30,10 @@ year,implementation_year,portfolio,carbon_footprint,carbon_limit,slack,satisfied
 2018,2019,vw_50,90.67631760203962,90.6763176020396,-1.4210854715202004e-14,True,True,Optimization terminated successfully
 2018,2019,vw_nz,121.13218757091423,121.13218757091423,0.0,True,True,Optimization terminated successfully
 2019,2020,vw_drift,194.76483248079626,194.76483248079626,0.0,True,True,benchmark (drift)
-2019,2020,mv,656.4440442421205,,,True,True,Optimization terminated successfully
-2019,2020,mv_50,328.22202212106026,328.22202212106026,0.0,True,True,Optimization terminated successfully
-2019,2020,vw_50,58.982296930337675,97.38241624039813,38.400119310060454,True,True,Optimization terminated successfully
-2019,2020,vw_nz,76.01807090448705,109.01896881382281,33.00089790933576,True,True,Optimization terminated successfully
+2019,2020,mv,656.4440442421123,,,True,True,Optimization terminated successfully
+2019,2020,mv_50,328.2220221210562,328.22202212105617,-5.684341886080802e-14,True,True,Optimization terminated successfully
+2019,2020,vw_50,58.982296930334286,97.38241624039813,38.40011931006384,True,True,Optimization terminated successfully
+2019,2020,vw_nz,76.01807090448904,109.01896881382281,33.00089790933377,True,True,Optimization terminated successfully
 2020,2021,vw_drift,154.7322862555128,154.7322862555128,0.0,True,True,benchmark (drift)
 2020,2021,mv,490.60491712873977,,,True,True,Optimization terminated successfully
 2020,2021,mv_50,245.30245856436994,245.30245856436989,-5.684341886080802e-14,True,True,Optimization terminated successfully
