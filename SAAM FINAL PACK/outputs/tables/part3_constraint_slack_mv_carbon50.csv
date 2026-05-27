@@ -1,0 +1,13 @@
+year,implementation_year,portfolio,carbon_footprint,carbon_limit,slack,satisfied_within_1e-6,optimization_success,optimization_message
+2013,2014,mv_50,106.54298557758888,106.54298557758887,-1.4210854715202004e-14,True,True,Optimization terminated successfully
+2014,2015,mv_50,254.73171163147694,254.7317116314769,-2.842170943040401e-14,True,True,Optimization terminated successfully
+2015,2016,mv_50,221.16632648098692,221.16632648098687,-5.684341886080802e-14,True,True,Optimization terminated successfully
+2016,2017,mv_50,254.2682716083345,254.26827160833446,-2.842170943040401e-14,True,True,Optimization terminated successfully
+2017,2018,mv_50,249.848360879519,249.84836087951894,-5.684341886080802e-14,True,True,Optimization terminated successfully
+2018,2019,mv_50,77.74700956262757,77.74700956262755,-1.4210854715202004e-14,True,True,Optimization terminated successfully
+2019,2020,mv_50,158.20900540155924,158.20900540155924,0.0,True,True,Optimization terminated successfully
+2020,2021,mv_50,235.93876573550725,235.93876573550722,-2.842170943040401e-14,True,True,Optimization terminated successfully
+2021,2022,mv_50,328.97136048873404,328.97136048873426,2.2737367544323206e-13,True,True,Optimization terminated successfully
+2022,2023,mv_50,252.86648454007133,252.8664845400711,-2.2737367544323206e-13,True,True,Optimization terminated successfully
+2023,2024,mv_50,255.98374841265434,255.98374841265428,-5.684341886080802e-14,True,True,Optimization terminated successfully
+2024,2025,mv_50,251.29547460831736,251.29547460831725,-1.1368683772161603e-13,True,True,Optimization terminated successfully
