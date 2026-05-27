@@ -1,7 +1,0 @@
-portfolio,description,main_return_file
-vw,strict monthly-rebalanced value-weighted benchmark,part2_returns_vw.csv
-vw_drift,annual value-weighted allocation with intra-year drift,all_portfolio_monthly_returns.csv
-mv,long-only minimum-variance portfolio,part1_mv_returns.csv
-mv_50,minimum variance with 50% carbon-footprint cap,part3_returns_mv_carbon50.csv
-vw_50,tracking-error portfolio with 50% carbon-footprint cap,part3_returns_vw_carbon50.csv
-vw_nz,tracking-error portfolio on the Net-Zero carbon path,part4_returns_vw_netzero.csv
